@@ -88,24 +88,12 @@
       margin-bottom: 10px;
       font-size: 1.5rem;
     }
-
-    /* Botón de descarga */
-    .download-button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #0288d1;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      display: none; /* Se oculta hasta que se capture la imagen */
-    }
   </style>
 </head>
 <body>
   <!-- Marco estilo Pokédex -->
   <div class="pokedex-frame">
-    <div class="title">Pokédex EXPOFAN!</div>
+    <div class="title">Pokédex AR</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
       <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
@@ -116,20 +104,11 @@
       </a-scene>
     </div>
     <!-- Botón de captura -->
-    <div class="capture-button" onclick="captureImage()">📸</div>
-
-    <!-- Imagen capturada -->
-    <div class="captured-image" id="capturedImageContainer">
-      <h3>¡Pokémon Capturado!</h3>
-      <img id="capturedImage" src="" alt="Captura de pantalla">
-    </div>
-
-    <!-- Botón de descarga -->
-    <button class="download-button" id="downloadButton" onclick="downloadImage()">Descargar Imagen</button>
+    <div class="capture-button" onclick="captureAndDownloadImage()">📸</div>
   </div>
 
   <script>
-    function captureImage() {
+    function captureAndDownloadImage() {
       // Obtener el canvas de la escena AR
       const scene = document.querySelector('#scene');
       const canvas = scene.querySelector('canvas');
@@ -140,30 +119,15 @@
           // Crear una imagen a partir del canvas
           const imageUrl = canvas.toDataURL('image/png');
 
-          // Mostrar la imagen capturada
-          const capturedImage = document.getElementById('capturedImage');
-          const capturedImageContainer = document.getElementById('capturedImageContainer');
-          capturedImage.src = imageUrl;
-          capturedImageContainer.style.display = 'block';
+          // Crear un enlace de descarga
+          const link = document.createElement('a');
+          link.href = imageUrl;
+          link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
 
-          // Hacer visible el botón de descarga
-          const downloadButton = document.getElementById('downloadButton');
-          downloadButton.style.display = 'block';
+          // Simular un clic en el enlace para descargar la imagen
+          link.click();
         }, 100); // Esperar un poco para que la escena AR termine de renderizar
       }
-    }
-
-    function downloadImage() {
-      // Obtener la URL de la imagen capturada
-      const imageUrl = document.getElementById('capturedImage').src;
-
-      // Crear un enlace de descarga
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
-
-      // Simular un clic en el enlace para descargar la imagen
-      link.click();
     }
   </script>
 </body>
