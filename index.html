@@ -3,7 +3,7 @@
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas2image@0.0.1/canvas2image.min.js"></script>
   <style>
     /* Ocultar el botón de VR */
     .a-enter-vr {
@@ -82,7 +82,7 @@
 <body>
   <!-- Marco estilo Pokédex -->
   <div class="pokedex-frame">
-    <div class="title">Pokédex EXPOFAN!</div>
+    <div class="title">Pokédex AR</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
       <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
@@ -98,19 +98,16 @@
 
   <script>
     function captureScreen() {
-      // Usamos html2canvas para capturar la pantalla visible de la página
-      html2canvas(document.querySelector(".pokedex-frame")).then(function(canvas) {
-        // Convertimos el canvas a una URL de imagen
-        const imageUrl = canvas.toDataURL('image/png');
+      // Obtenemos el canvas de la escena AR
+      const sceneElement = document.querySelector('a-scene');
+      const canvas = sceneElement.querySelector('canvas');
 
-        // Creamos un enlace para descargar la imagen
-        const link = document.createElement('a');
-        link.href = imageUrl;
-        link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
-
-        // Simulamos un clic en el enlace para iniciar la descarga
-        link.click();
-      });
+      // Usamos canvas2image para descargar la imagen
+      if (canvas) {
+        Canvas2Image.saveAsPNG(canvas);
+      } else {
+        console.error('No se encontró el canvas de AR');
+      }
     }
   </script>
 </body>
