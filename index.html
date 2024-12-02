@@ -88,6 +88,18 @@
       margin-bottom: 10px;
       font-size: 1.5rem;
     }
+
+    /* Botón de descarga */
+    .download-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none; /* Se oculta hasta que se capture la imagen */
+    }
   </style>
 </head>
 <body>
@@ -111,6 +123,9 @@
       <h3>¡Pokémon Capturado!</h3>
       <img id="capturedImage" src="" alt="Captura de pantalla">
     </div>
+
+    <!-- Botón de descarga -->
+    <button class="download-button" id="downloadButton" onclick="downloadImage()">Descargar Imagen</button>
   </div>
 
   <script>
@@ -128,7 +143,24 @@
         const capturedImageContainer = document.getElementById('capturedImageContainer');
         capturedImage.src = imageUrl;
         capturedImageContainer.style.display = 'block';
+
+        // Hacer visible el botón de descarga
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.style.display = 'block';
       }
+    }
+
+    function downloadImage() {
+      // Obtener la URL de la imagen capturada
+      const imageUrl = document.getElementById('capturedImage').src;
+
+      // Crear un enlace de descarga
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
+
+      // Simular un clic en el enlace para descargar la imagen
+      link.click();
     }
   </script>
 </body>
