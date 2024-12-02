@@ -93,7 +93,7 @@
 <body>
   <!-- Marco estilo Pokédex -->
   <div class="pokedex-frame">
-    <div class="title">Pokédex AR</div>
+    <div class="title">Pokédex EXPOFAN!</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
       <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
@@ -109,12 +109,12 @@
 
   <script>
     function captureAndDownloadImage() {
-      // Obtener el canvas de la escena AR
       const scene = document.querySelector('#scene');
+      
+      // Verificar si el canvas ya está presente y tiene contenido
       const canvas = scene.querySelector('canvas');
-
       if (canvas) {
-        // Asegurarse de que la escena AR esté completamente renderizada
+        // Esperar un poco para asegurarse de que la escena esté completamente renderizada
         setTimeout(function() {
           // Crear una imagen a partir del canvas
           const imageUrl = canvas.toDataURL('image/png');
@@ -126,7 +126,7 @@
 
           // Simular un clic en el enlace para descargar la imagen
           link.click();
-        }, 100); // Esperar un poco para que la escena AR termine de renderizar
+        }, 200); // Retrasar un poco para asegurarnos que el contenido esté renderizado
       }
     }
   </script>
