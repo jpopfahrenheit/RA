@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
@@ -7,7 +7,31 @@
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs>
     <a-marker preset="hiro">
-      <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 0 0" width="1" height="1"></a-image>
+      <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
+ -->
+
+
+ <!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    /* Ocultar el botón de VR */
+    .a-enter-vr {
+      display: none !important;
+    }
+  </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
+  <a-scene embedded arjs vr-mode-ui="enabled: false">
+    <a-marker preset="hiro">
+      <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
     </a-marker>
     <a-entity camera></a-entity>
   </a-scene>
