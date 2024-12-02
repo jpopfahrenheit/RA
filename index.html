@@ -12,68 +12,74 @@
     /* Estilo general del cuerpo */
     body {
       margin: 0;
-      background-color: #f5f5f5; /* Fondo claro como las pantallas de una Pokédex */
+      background-color: #f5f5f5;
       font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      width: 100vw;
       overflow: hidden;
     }
 
     /* Contenedor principal */
     .pokedex-frame {
-      width: 90vw;
-      max-width: 500px; /* Limitar el tamaño máximo */
-      height: 90vh;
-      max-height: 800px; /* Limitar el tamaño máximo */
-      border: 10px solid #d32f2f; /* Color rojo para simular la Pokédex */
+      width: 90%;
+      max-width: 500px;
+      height: 90%;
+      max-height: 800px;
+      border: 10px solid #d32f2f;
       border-radius: 20px;
       padding: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-between;
     }
 
     /* Pantalla de realidad aumentada */
     .pokedex-screen {
       width: 100%;
-      height: 80%;
-      background: transparent;
+      height: 70%;
+      background: black;
       border: 5px solid #212121;
       border-radius: 10px;
       overflow: hidden;
       position: relative;
     }
 
-    /* Botones decorativos */
-    .button {
-      width: 50px;
-      height: 50px;
+    /* Botón de captura */
+    .capture-button {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      background-color: #0288d1;
-      position: relative;
-      margin: 0 10px;
-    }
-
-    .button-wrapper {
+      background-color: #f44336;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       display: flex;
-      justify-content: space-between;
-      width: 80%;
-      margin-top: 10px;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
     }
 
-    /* Etiqueta de título */
-    .title {
-      color: #ffffff;
-      background-color: #d32f2f;
-      padding: 5px 20px;
-      border-radius: 10px;
+    /* Contenedor de la imagen capturada */
+    .captured-image {
+      margin-top: 20px;
+      display: none;
       text-align: center;
-      margin-bottom: 10px;
-      font-size: 1.5rem;
     }
+
+    .captured-image img {
+      max-width: 100%;
+      max-height: 400px;
+    }
+
   </style>
 </head>
 <body>
@@ -82,18 +88,41 @@
     <div class="title">Pokédex AR</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
-      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false">
+      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
         <a-marker preset="hiro">
           <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
         </a-marker>
         <a-entity camera></a-entity>
       </a-scene>
     </div>
-    <!-- Botones decorativos -->
-    <div class="button-wrapper">
-      <div class="button"></div>
-      <div class="button"></div>
+
+    <!-- Botón para capturar imagen -->
+    <div class="capture-button" onclick="captureImage()">📸</div>
+
+    <!-- Imagen capturada -->
+    <div class="captured-image" id="capturedImageContainer">
+      <h3>¡Pokémon Capturado!</h3>
+      <img id="capturedImage" src="" alt="Captura de pantalla">
     </div>
   </div>
+
+  <script>
+    function captureImage() {
+      // Obtener el canvas de la escena AR
+      const scene = document.querySelector('#scene');
+      const canvas = scene.querySelector('canvas');
+      
+      if (canvas) {
+        // Crear una imagen a partir del canvas
+        const imageUrl = canvas.toDataURL('image/png');
+
+        // Mostrar la imagen capturada
+        const capturedImage = document.getElementById('capturedImage');
+        const capturedImageContainer = document.getElementById('capturedImageContainer');
+        capturedImage.src = imageUrl;
+        capturedImageContainer.style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>
