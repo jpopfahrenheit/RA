@@ -3,6 +3,7 @@
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
   <style>
     /* Ocultar el botón de VR */
     .a-enter-vr {
@@ -66,18 +67,6 @@
       cursor: pointer;
     }
 
-    /* Contenedor de la imagen capturada */
-    .captured-image {
-      margin-top: 20px;
-      display: none;
-      text-align: center;
-    }
-
-    .captured-image img {
-      max-width: 100%;
-      max-height: 400px;
-    }
-
     /* Etiqueta de título */
     .title {
       color: #ffffff;
@@ -104,30 +93,24 @@
       </a-scene>
     </div>
     <!-- Botón de captura -->
-    <div class="capture-button" onclick="captureAndDownloadImage()">📸</div>
+    <div class="capture-button" onclick="captureScreen()">📸</div>
   </div>
 
   <script>
-    function captureAndDownloadImage() {
-      const scene = document.querySelector('#scene');
-      
-      // Verificar si el canvas ya está presente y tiene contenido
-      const canvas = scene.querySelector('canvas');
-      if (canvas) {
-        // Esperar un poco para asegurarse de que la escena esté completamente renderizada
-        setTimeout(function() {
-          // Crear una imagen a partir del canvas
-          const imageUrl = canvas.toDataURL('image/png');
+    function captureScreen() {
+      // Usamos html2canvas para capturar la pantalla visible de la página
+      html2canvas(document.querySelector(".pokedex-frame")).then(function(canvas) {
+        // Convertimos el canvas a una URL de imagen
+        const imageUrl = canvas.toDataURL('image/png');
 
-          // Crear un enlace de descarga
-          const link = document.createElement('a');
-          link.href = imageUrl;
-          link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
+        // Creamos un enlace para descargar la imagen
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = 'pokemon_capture.png'; // Nombre de archivo sugerido
 
-          // Simular un clic en el enlace para descargar la imagen
-          link.click();
-        }, 200); // Retrasar un poco para asegurarnos que el contenido esté renderizado
-      }
+        // Simulamos un clic en el enlace para iniciar la descarga
+        link.click();
+      });
     }
   </script>
 </body>
