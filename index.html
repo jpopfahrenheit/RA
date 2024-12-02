@@ -105,7 +105,7 @@
 <body>
   <!-- Marco estilo Pokédex -->
   <div class="pokedex-frame">
-    <div class="title">Pokédex AR</div>
+    <div class="title">Pokédex EXPOFAN!</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
       <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
@@ -133,20 +133,23 @@
       // Obtener el canvas de la escena AR
       const scene = document.querySelector('#scene');
       const canvas = scene.querySelector('canvas');
-      
+
       if (canvas) {
-        // Crear una imagen a partir del canvas
-        const imageUrl = canvas.toDataURL('image/png');
+        // Asegurarse de que la escena AR esté completamente renderizada
+        setTimeout(function() {
+          // Crear una imagen a partir del canvas
+          const imageUrl = canvas.toDataURL('image/png');
 
-        // Mostrar la imagen capturada
-        const capturedImage = document.getElementById('capturedImage');
-        const capturedImageContainer = document.getElementById('capturedImageContainer');
-        capturedImage.src = imageUrl;
-        capturedImageContainer.style.display = 'block';
+          // Mostrar la imagen capturada
+          const capturedImage = document.getElementById('capturedImage');
+          const capturedImageContainer = document.getElementById('capturedImageContainer');
+          capturedImage.src = imageUrl;
+          capturedImageContainer.style.display = 'block';
 
-        // Hacer visible el botón de descarga
-        const downloadButton = document.getElementById('downloadButton');
-        downloadButton.style.display = 'block';
+          // Hacer visible el botón de descarga
+          const downloadButton = document.getElementById('downloadButton');
+          downloadButton.style.display = 'block';
+        }, 100); // Esperar un poco para que la escena AR termine de renderizar
       }
     }
 
