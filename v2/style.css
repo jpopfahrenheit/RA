@@ -1,0 +1,30 @@
+/* Ocultar el botón de VR */
+.a-enter-vr {
+    display: none !important;
+}
+
+/* Estilo general del cuerpo */
+body {
+    margin: 0;
+    top: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Contenedor principal */
+.pokedex-frame {
+    margin: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    border: 10px solid #d32f2f;
+    box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+

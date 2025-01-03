@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas2image@0.0.1/canvas2image.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Marco estilo Pokédex -->
+  <div class="pokedex-frame">
+    <!-- Pantalla de realidad aumentada -->
+    <div class="pokedex-screen">
+      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
+        <a-marker preset="hiro">
+          <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
+        </a-marker>
+        <a-entity camera></a-entity>
+      </a-scene>
+  </div>
+</body>
+</html>
