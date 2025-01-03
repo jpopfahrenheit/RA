@@ -1,0 +1,23 @@
+# Created by Metasequoia
+
+newmtl BodyBRediba_Wing00
+Ka 0.20000 0.20000 0.20000
+Kd 0.00000 0.00000 0.00000
+Ks 0.20000 0.20000 0.20000
+Ns 20.00000
+map_Kd C:\Users\Sabrina\Downloads\pm0015_00_Rig\pm0015_00_BodyB1.png
+
+newmtl BodyC
+Ka 0.20000 0.20000 0.20000
+Kd 0.00000 0.00000 0.00000
+Ks 0.20000 0.20000 0.20000
+Ns 20.00000
+map_Kd C:\Users\Sabrina\Downloads\pm0015_00_Rig\pm0015_00_BodyC1.png
+
+newmtl BodyANutrey_Env
+Ka 0.20000 0.20000 0.20000
+Kd 0.00000 0.00000 0.00000
+Ks 0.20000 0.20000 0.20000
+Ns 20.00000
+map_Kd C:\Users\Sabrina\Downloads\pm0015_00_Rig\pm0015_00_BodyA1.png
+

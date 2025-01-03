@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas2image@0.0.1/canvas2image.min.js"></script>
+  <style>
+    /* Ocultar el botón de VR */
+    .a-enter-vr {
+      display: none !important;
+    }
+
+    /* Estilo general del cuerpo */
+    body {
+      margin: 0;
+      top: 0;
+      background-color: #f5f5f5; /* Fondo claro como las pantallas de una Pokédex */
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Contenedor principal */
+    .pokedex-frame {
+      width: 90vw;
+      max-width: 500px; /* Limitar el tamaño máximo */
+      height: 90vh;
+      max-height: 800px; /* Limitar el tamaño máximo */
+      border: 10px solid #d32f2f; /* Color rojo para simular la Pokédex */
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Pantalla de realidad aumentada */
+    .pokedex-screen {
+      width: 80%;
+      height: 80%;
+      background: transparent;
+      border: 5px solid #212121;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Botón de captura */
+    .capture-button {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #f44336;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Etiqueta de título */
+    .title {
+      color: #ffffff;
+      background-color: #d32f2f;
+      padding: 5px 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Marco estilo Pokédex -->
+  <div class="pokedex-frame">
+    <div class="title">Pokédex AR</div>
+    <!-- Pantalla de realidad aumentada -->
+    <div class="pokedex-screen">
+      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
+        <!-- Marcador AR -->
+        <a-marker preset="hiro">
+          <!-- Carga el modelo OBJ con textura MTL -->
+          <a-entity 
+            obj-model="obj: ./models/pm0015_00.obj; mtl: ./models/pm0015_00.mtl"
+            position="0 0 0"
+            rotation="0 180 0"
+            scale="0.5 0.5 0.5">
+          </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+      </a-scene>
+    </div>
+    <!-- Botón de captura -->
+    <div class="capture-button" onclick="captureScreen()">📸</div>
+  </div>
+
+  <script>
+    function captureScreen() {
+      // Obtenemos el canvas de la escena AR
+      const sceneElement = document.querySelector('a-scene');
+      const canvas = sceneElement.querySelector('canvas');
+
+      // Usamos canvas2image para descargar la imagen
+      if (canvas) {
+        Canvas2Image.saveAsPNG(canvas);
+      } else {
+        console.error('No se encontró el canvas de AR');
+      }
+    }
+  </script>
+</body>
+</html>
