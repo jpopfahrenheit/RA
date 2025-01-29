@@ -1,155 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
   <style>
-    /* Ocultar el botón de VR */
-    .a-enter-vr {
-      display: none !important;
-    }
-
-    /* Estilo general del cuerpo */
     body {
       margin: 0;
-      top: 0;
-      background-color: #f5f5f5;
-      font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
+      background-color: #f5f5f5;
     }
 
-    /* Contenedor principal */
-    .pokedex-frame {
-      width: 90vw;
-      max-width: 500px;
-      height: 90vh;
-      max-height: 800px;
-      border: 10px solid #d32f2f;
-      border-radius: 20px;
-      padding: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Pantalla de realidad aumentada */
-    .pokedex-screen {
-      width: 80%;
-      height: 80%;
-      background: transparent;
-      border: 5px solid #212121;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Botón de captura */
     .capture-button {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background-color: #f44336;
       position: absolute;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2rem;
+      padding: 10px 20px;
+      font-size: 18px;
       color: white;
+      background-color: #f44336;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-      transition: transform 0.1s ease;
     }
 
     .capture-button:active {
-      transform: scale(0.9) translateX(-50%);
-    }
-
-    /* Etiqueta de título */
-    .title {
-      color: #ffffff;
-      background-color: #d32f2f;
-      padding: 5px 20px;
-      border-radius: 10px;
-      text-align: center;
-      margin-bottom: 10px;
-      font-size: 1.5rem;
+      transform: scale(0.98);
     }
   </style>
 </head>
 
 <body>
-  <!-- Marco estilo Pokédex -->
-  <div class="pokedex-frame">
-    <div class="title">Pokédex AR</div>
-    <!-- Pantalla de realidad aumentada -->
-    <div class="pokedex-screen">
-      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" renderer="preserveDrawingBuffer: true">
-        <a-marker preset="hiro">
-          <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
-        </a-marker>
-        <a-entity camera></a-entity>
-      </a-scene>
-    </div>
-    <!-- Botón de captura -->
-    <div class="capture-button" onclick="captureScreen()">📸</div>
-  </div>
+  <!-- Escena de realidad aumentada -->
+  <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" renderer="preserveDrawingBuffer: true">
+    <a-marker preset="hiro" id="hiro-marker" emitable="true">
+      <a-image id="pokemon" src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="2" height="2"></a-image>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- Botón de captura -->
+  <button class="capture-button" onclick="captureAR()">📸 Capturar</button>
 
   <script>
-    // Acceder al video de la cámara
     let videoStream;
+    let imageVisible = false;
+    let visibilityTimer;
 
+    // Obtener acceso a la cámara trasera
     async function setupCamera() {
       try {
-        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+
+        const constraints = rearCamera ? { video: { deviceId: rearCamera.deviceId } } : { video: true };
+
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints);
       } catch (error) {
         console.error('Error al acceder a la cámara:', error);
       }
     }
 
-    // Capturar la pantalla
-    function captureScreen() {
-      const sceneElement = document.querySelector('a-scene');
-      const canvas = sceneElement.querySelector('canvas');
-
-      if (canvas && videoStream) {
-        // Crear un canvas 2D temporal
-        const tempCanvas = document.createElement('canvas');
-        const tempContext = tempCanvas.getContext('2d');
-
-        // Configurar el canvas temporal con las mismas dimensiones
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-
-        // Dibujar el video de la cámara en el canvas temporal
+    // Función para capturar la imagen de la cámara
+    function captureCamera() {
+      return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         video.srcObject = videoStream;
         video.play();
 
         video.onloadeddata = () => {
-          // Dibujar el video en el canvas
-          tempContext.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
 
-          // Dibujar el contenido de WebGL (AR) sobre el video
-          tempContext.drawImage(canvas, 0, 0);
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-          // Crear un enlace temporal para descargar la imagen
-          const link = document.createElement('a');
-          link.href = tempCanvas.toDataURL('image/png');
-          link.download = 'captura_pokedex.png';
-          link.click();
+          resolve(canvas.toDataURL('image/png'));
         };
-      } else {
-        console.error('No se encontró el canvas de AR o el video de la cámara');
+
+        video.onerror = (err) => {
+          reject(err);
+        };
+      });
+    }
+
+    // Función para capturar la imagen de la escena AR (Vamoacalmarnos)
+    function captureAR() {
+      const scene = document.querySelector('a-scene');
+      const renderer = scene.renderer;
+
+      if (!renderer) {
+        console.error('No se encontró el renderer de la escena.');
+        return;
+      }
+
+      requestAnimationFrame(function () {
+        const canvas = renderer.domElement;
+        const tempCanvas = document.createElement('canvas');
+        const tempContext = tempCanvas.getContext('2d');
+
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+
+        tempContext.drawImage(canvas, 0, 0);
+
+        const arImageData = tempCanvas.toDataURL('image/png');
+
+        captureCamera().then(cameraImageData => {
+          const finalCanvas = document.createElement('canvas');
+          const finalContext = finalCanvas.getContext('2d');
+
+          const arImage = new Image();
+          const cameraImage = new Image();
+
+          arImage.src = arImageData;
+          cameraImage.src = cameraImageData;
+
+          arImage.onload = () => {
+            cameraImage.onload = () => {
+              finalCanvas.width = cameraImage.width;
+              finalCanvas.height = cameraImage.height;
+
+              finalContext.drawImage(cameraImage, 0, 0);
+              finalContext.drawImage(arImage, 0, 0, cameraImage.width, cameraImage.height);
+
+              const link = document.createElement('a');
+
+              link.href = finalCanvas.toDataURL('image/png');
+              link.download = 'fusionada.png';
+              link.click();
+            };
+          };
+        }).catch(err => {
+          console.error('Error al capturar la imagen de la cámara:', err);
+        });
+      });
+    }
+
+    // Función para mantener la imagen visible por un tiempo después de perder el foco del marcador
+    function keepImageVisible() {
+      const pokemonImage = document.querySelector('#pokemon');
+      if (!pokemonImage) return;
+
+      // Mantenemos la imagen visible durante 3 segundos después de perder el foco del marcador
+      if (!imageVisible) {
+        pokemonImage.setAttribute('visible', 'true');
+        imageVisible = true;
+
+        // Hacer la imagen invisible después de 3 segundos
+        clearTimeout(visibilityTimer);
+        visibilityTimer = setTimeout(() => {
+          pokemonImage.setAttribute('visible', 'false');
+          imageVisible = false;
+        }, 10000); // 3000 ms = 3 segundos
       }
     }
+
+    // Detectar cuando el marcador pierde el foco
+    const marker = document.querySelector('#hiro-marker');
+    marker.addEventListener('markerLost', keepImageVisible);
 
     // Inicializar la cámara al cargar la página
     window.onload = setupCamera;
