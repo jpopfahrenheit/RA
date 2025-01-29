@@ -46,10 +46,20 @@
   <script>
     let videoStream;
 
-    // Obtener acceso a la cámara
+    // Obtener acceso a la cámara trasera
     async function setupCamera() {
       try {
-        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Obtener todos los dispositivos de video disponibles
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        
+        // Buscar la cámara trasera (facing: environment)
+        const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+
+        // Si se encuentra la cámara trasera, se utiliza
+        const constraints = rearCamera ? { video: { deviceId: rearCamera.deviceId } } : { video: true }; // Si no se encuentra, usar cualquier cámara disponible.
+
+        // Solicitar acceso a la cámara
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints);
       } catch (error) {
         console.error('Error al acceder a la cámara:', error);
       }
