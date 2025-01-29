@@ -3,7 +3,6 @@
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas2image@0.0.1/canvas2image.min.js"></script>
   <style>
     /* Ocultar el botón de VR */
     .a-enter-vr {
@@ -14,7 +13,7 @@
     body {
       margin: 0;
       top: 0;
-      background-color: #f5f5f5; /* Fondo claro como las pantallas de una Pokédex */
+      background-color: #f5f5f5;
       font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
@@ -26,10 +25,10 @@
     /* Contenedor principal */
     .pokedex-frame {
       width: 90vw;
-      max-width: 500px; /* Limitar el tamaño máximo */
+      max-width: 500px;
       height: 90vh;
-      max-height: 800px; /* Limitar el tamaño máximo */
-      border: 10px solid #d32f2f; /* Color rojo para simular la Pokédex */
+      max-height: 800px;
+      border: 10px solid #d32f2f;
       border-radius: 20px;
       padding: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -66,6 +65,11 @@
       font-size: 2rem;
       color: white;
       cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .capture-button:active {
+      transform: scale(0.9) translateX(-50%);
     }
 
     /* Etiqueta de título */
@@ -87,16 +91,9 @@
     <div class="title">Pokédex AR</div>
     <!-- Pantalla de realidad aumentada -->
     <div class="pokedex-screen">
-      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" id="scene">
-        <!-- Marcador AR -->
+      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" renderer="preserveDrawingBuffer: true">
         <a-marker preset="hiro">
-          <!-- Carga el modelo OBJ con textura MTL -->
-          <a-entity 
-            obj-model="obj: ./models/pm0015_00.obj; mtl: ./models/pm0015_00.mtl"
-            position="0 0 0"
-            rotation="0 180 0"
-            scale="0.5 0.5 0.5">
-          </a-entity>
+          <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
         </a-marker>
         <a-entity camera></a-entity>
       </a-scene>
@@ -106,18 +103,56 @@
   </div>
 
   <script>
+    // Acceder al video de la cámara
+    let videoStream;
+
+    async function setupCamera() {
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      } catch (error) {
+        console.error('Error al acceder a la cámara:', error);
+      }
+    }
+
+    // Capturar la pantalla
     function captureScreen() {
-      // Obtenemos el canvas de la escena AR
       const sceneElement = document.querySelector('a-scene');
       const canvas = sceneElement.querySelector('canvas');
 
-      // Usamos canvas2image para descargar la imagen
-      if (canvas) {
-        Canvas2Image.saveAsPNG(canvas);
+      if (canvas && videoStream) {
+        // Crear un canvas 2D temporal
+        const tempCanvas = document.createElement('canvas');
+        const tempContext = tempCanvas.getContext('2d');
+
+        // Configurar el canvas temporal con las mismas dimensiones
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+
+        // Dibujar el video de la cámara en el canvas temporal
+        const video = document.createElement('video');
+        video.srcObject = videoStream;
+        video.play();
+
+        video.onloadeddata = () => {
+          // Dibujar el video en el canvas
+          tempContext.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+
+          // Dibujar el contenido de WebGL (AR) sobre el video
+          tempContext.drawImage(canvas, 0, 0);
+
+          // Crear un enlace temporal para descargar la imagen
+          const link = document.createElement('a');
+          link.href = tempCanvas.toDataURL('image/png');
+          link.download = 'captura_pokedex.png';
+          link.click();
+        };
       } else {
-        console.error('No se encontró el canvas de AR');
+        console.error('No se encontró el canvas de AR o el video de la cámara');
       }
     }
+
+    // Inicializar la cámara al cargar la página
+    window.onload = setupCamera;
   </script>
 </body>
 </html>

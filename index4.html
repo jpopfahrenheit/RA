@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    .capture-button {
+      position: absolute;
+      bottom: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      background-color: #f44336;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .capture-button:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Escena de realidad aumentada -->
+  <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" renderer="preserveDrawingBuffer: true">
+    <a-marker preset="hiro">
+      <a-image id="pokemon" src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- Botón de captura -->
+  <button class="capture-button" onclick="captureAR()">📸 Capturar</button>
+
+  <script>
+    function captureAR() {
+      const scene = document.querySelector('a-scene');
+      const renderer = scene.renderer;
+
+      if (!renderer) {
+        console.error('No se encontró el renderer de la escena.');
+        return;
+      }
+
+      // Esperar a que la escena esté completamente renderizada
+      requestAnimationFrame(function () {
+        const canvas = renderer.domElement;
+
+        // Crear un canvas temporal para capturar la imagen
+        const tempCanvas = document.createElement('canvas');
+        const tempContext = tempCanvas.getContext('2d');
+
+        // Ajustar el tamaño del canvas temporal
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+
+        // Copiar el contenido del canvas WebGL en el canvas temporal
+        tempContext.drawImage(canvas, 0, 0);
+
+        // Crear un enlace para descargar la imagen
+        const link = document.createElement('a');
+        link.href = tempCanvas.toDataURL('image/png'); // Convertir la imagen a formato PNG
+        link.download = 'pokemon_AR.png'; // Nombre de la imagen descargada
+        link.click(); // Disparar la descarga
+      });
+    }
+  </script>
+</body>
+</html>

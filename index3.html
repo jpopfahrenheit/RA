@@ -6,26 +6,106 @@
   <style>
     body {
       margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    .pokedex-frame {
+      width: 90vw;
+      max-width: 500px;
+      height: 90vh;
+      max-height: 800px;
+      border: 10px solid #d32f2f;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pokedex-screen {
+      width: 100%;
+      height: 80%;
+      background: transparent;
+      border: 5px solid #212121;
+      border-radius: 10px;
       overflow: hidden;
+      position: relative;
+    }
+
+    .capture-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      background-color: #f44336;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .capture-button:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
+
 <body>
-  <!-- Escena de A-Frame -->
-  <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false">
-    <!-- Cámara -->
-    <a-camera position="0 0 5"></a-camera>
+  <div class="pokedex-frame">
+    <div class="title">Pokédex AR</div>
+    <div class="pokedex-screen">
+      <!-- Escena de realidad aumentada -->
+      <a-scene embedded arjs="debugUIEnabled: false" vr-mode-ui="enabled: false" renderer="preserveDrawingBuffer: true">
+        <a-marker preset="hiro">
+          <a-image src="./img/Vamoacalmarnos.png" position="0 0 0" rotation="90 180 0" width="1" height="1"></a-image>
+        </a-marker>
+        <a-entity camera></a-entity>
+      </a-scene>
+    </div>
 
-    <!-- Entidad que carga el modelo 3D en formato GLB -->
-    <a-entity 
-      gltf-model="url(https://raw.githubusercontent.com/jpopfahrenheit/RA/model/test.glb)" 
-      scale="0.5 0.5 0.5" 
-      position="0 0 0">
-    </a-entity>
+    <!-- Botón de captura -->
+    <button class="capture-button" onclick="captureScreen()">📸 Capturar</button>
+  </div>
 
-    <!-- Iluminación -->
-    <a-light type="ambient" color="#fff" intensity="0.5" position="5 5 5"></a-light>
-    <a-light type="directional" color="#ff0000" intensity="1" position="-5 5 5"></a-light>
-  </a-scene>
+  <script>
+    function captureScreen() {
+      const sceneElement = document.querySelector('a-scene');
+      const arCanvas = sceneElement.querySelector('canvas'); // Canvas de AR.js
+
+      if (!arCanvas) {
+        console.error('No se encontró el canvas de AR.');
+        return;
+      }
+
+      // Crear un canvas temporal para fusionar cámara + AR
+      const tempCanvas = document.createElement('canvas');
+      const tempContext = tempCanvas.getContext('2d');
+
+      // Ajustar tamaño del canvas
+      tempCanvas.width = arCanvas.width;
+      tempCanvas.height = arCanvas.height;
+
+      // Capturar el fotograma de la cámara
+      const video = document.querySelector('video'); // Obtener el stream de la cámara
+      if (video) {
+        tempContext.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+      } else {
+        console.warn('No se encontró el video de la cámara.');
+      }
+
+      // Dibujar la imagen de AR sobre la cámara
+      tempContext.drawImage(arCanvas, 0, 0);
+
+      // Descargar la imagen fusionada
+      const link = document.createElement('a');
+      link.href = tempCanvas.toDataURL('image/png');
+      link.download = 'captura_pokedex.png';
+      link.click();
+    }
+  </script>
 </body>
 </html>

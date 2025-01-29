@@ -136,7 +136,17 @@
               // Crear un enlace para descargar las imágenes
               const link = document.createElement('a');
 
-              // Descargar la imagen fusionada
+/*               // 1. Descargar la imagen de Vamoacalmarnos
+              link.href = arImageData;
+              link.download = 'vamoacalmarnos.png';
+              link.click();
+
+              // 2. Descargar la imagen de la cámara
+              link.href = cameraImageData;
+              link.download = 'camara.png';
+              link.click(); */
+
+              // 3. Descargar la imagen fusionada
               link.href = finalCanvas.toDataURL('image/png');
               link.download = 'fusionada.png';
               link.click();
